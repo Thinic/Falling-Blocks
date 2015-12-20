@@ -1,8 +1,11 @@
-package nh.tetris;
+package nh.fb.util;
 
 import java.util.Random;
 
-public class BagGenerator implements TetrominoGenerator
+import nh.fb.board.PieceType;
+import nh.fb.board.PieceTypeGenerator;
+
+public class BagGenerator implements PieceTypeGenerator
 {
     private int index;
     private int[] next;
@@ -42,7 +45,7 @@ public class BagGenerator implements TetrominoGenerator
     {
         for (int i = 0; i < next.length; i++) 
         {
-            System.out.print(getTetrominoType(next[i]).getName());
+            System.out.print(getPieceType(next[i]).getName());
             
             if (i != next.length - 1) System.out.print(", ");
         }
@@ -51,9 +54,9 @@ public class BagGenerator implements TetrominoGenerator
     }
 
     @Override
-    public TetrominoType next()
+    public PieceType nextPieceType()
     {
-        TetrominoType type = getTetrominoType(next[index]);
+        PieceType type = getPieceType(next[index]);
         
         index++;
         
@@ -66,17 +69,17 @@ public class BagGenerator implements TetrominoGenerator
         return type;
     }
     
-    private TetrominoType getTetrominoType(int i) 
+    private PieceType getPieceType(int i) 
     {
         switch (i) 
         {
-            case 0: return TetrominoType.I;
-            case 1: return TetrominoType.L;
-            case 2: return TetrominoType.J;
-            case 3: return TetrominoType.T;
-            case 4: return TetrominoType.O;
-            case 5: return TetrominoType.S;
-            case 6: default: return TetrominoType.Z;
+            case 0: return PieceType.I;
+            case 1: return PieceType.Z;
+            case 2: return PieceType.S;
+            case 3: return PieceType.L;
+            case 4: return PieceType.J;
+            case 5: return PieceType.O;
+            default: return PieceType.T;
         }
     }
 }
