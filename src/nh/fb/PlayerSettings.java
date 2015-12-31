@@ -15,6 +15,9 @@ public class PlayerSettings
     
     private int lineClearWait;
     
+    private int keyHoldWait;
+    private int keyHoldRepeat;
+    
     public PlayerSettings() 
     {
         
@@ -41,6 +44,15 @@ public class PlayerSettings
     public void setSecRotCWKey(int k) { rotCW2Key = k; }
     public void setRotCCWKey(int k) { rotCCWKey = k; }
     public void setHardDropKey(int k) { hardDropKey = k; }
+    
+    /*
+     * how long before key repeats, and how often to repeat after that
+     */
+    public void setKeyWait(int wait) { keyHoldWait = wait; }
+    public void setKeyRepeat(int wait) { keyHoldRepeat = wait; }
+    
+    public int getKeyWait() { return keyHoldWait; }
+    public int getKeyRepeat() { return keyHoldRepeat; }
     
     /*
      * player dependent game settings

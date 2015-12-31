@@ -2,11 +2,11 @@ package nh.core;
 
 import java.util.HashMap;
 
-import nh.core.gui.GameWindow;
+import nh.gui.Window;
 
 public abstract class StateBasedGame
 {
-    private GameWindow window;
+    private Window window;
     
     private boolean running = false;
     
@@ -16,7 +16,7 @@ public abstract class StateBasedGame
     
     public StateBasedGame() 
     {
-        window = new GameWindow();
+        window = new Window();
         
         states = new HashMap<>();
     }
@@ -24,7 +24,7 @@ public abstract class StateBasedGame
     public abstract void initialize();
     public abstract void end();
     
-    public GameWindow getWindow() { return window; }
+    public Window getWindow() { return window; }
     
     public void start() 
     {
@@ -69,7 +69,6 @@ public abstract class StateBasedGame
     
     private void update() 
     {
-        window.update();
         current.update();
     }
     
@@ -85,11 +84,20 @@ public abstract class StateBasedGame
     
     public void setGameState(int id) 
     {
-        current = states.get(id);
+        GameState state = states.get(id);
+        
+        if (state == null) 
+        {
+            System.err.println("State with id " + id + " does not exist, returning to last state");
+            
+            return;
+        }
+        
+        current = state;
         
         current.reset();
         
-        window.setGameCanvas(current.getGameCanvas());
+        window.setScene(current.getScene());
     }
     
     public void exit() 
@@ -97,3 +105,4 @@ public abstract class StateBasedGame
         System.exit(0);
     }
 }
+

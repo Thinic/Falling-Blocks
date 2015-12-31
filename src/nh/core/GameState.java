@@ -1,66 +1,157 @@
 package nh.core;
 
-import java.awt.Graphics2D;
+import java.awt.Graphics;
 
-import nh.core.gui.GameCanvas;
-import nh.core.gui.GameComponent;
+import nh.gui.Element;
+import nh.gui.Scene;
+import nh.gui.SceneUtil;
 
 public abstract class GameState
 {
-    private GameCanvas canvas;
+    private Scene scene;
+    private SceneUtil util;
+    private GamePanel panel;
     private StateBasedGame game;
+    private Keyboard keys;
     
     public GameState(StateBasedGame game) 
     {
         this.game = game;
         
-        final GameState state = this;
+        keys = new Keyboard();
         
-        canvas = new GameCanvas() 
-        {
-            public void drawBackground(Graphics2D g) 
-            {
-                state.draw(g);
-            }
-        };
+        panel = new GamePanel(this);
+        panel.setSize(400, 400);
+        
+        scene = new Scene();
+        scene.add(panel);
+        
+        util = new SceneUtil(scene);
     }
     
-    public abstract void reset();
-    
-    public abstract void update();
-    
-    public abstract void draw(Graphics2D g);
-    
-    public boolean isKeyDown(int code) 
+    public Keyboard getKeyboard() 
     {
-        return canvas.getGameInput().isKeyDown(code);
+        return keys;
     }
     
-    public boolean isKeyJustDown(int code) 
+    public StateBasedGame getGame() 
     {
-        return canvas.getGameInput().isKeyJustDown(code);
+        return game;
     }
     
-    public void changeState(int id) 
+    public Scene getScene() 
+    {
+        return scene;
+    }
+    
+    public SceneUtil getSceneUtil() 
+    {
+        return util;
+    }
+    
+    public void changeGameState(int id) 
     {
         game.setGameState(id);
     }
     
-    public void add(GameComponent gc) 
+    public int getWidth() 
     {
-        canvas.add(gc);
+        return panel.getWidth();
     }
     
-    public void remove(GameComponent gc) 
+    public int getHeight() 
     {
-        canvas.remove(gc);
+        return panel.getHeight();
     }
     
-    public int getWidth() { return canvas.getWidth(); }
+    public void update() 
+    {
+        updateState();
+        
+        keys.update();
+    }
     
-    public int getHeight() { return canvas.getHeight(); }
+    public abstract void reset();
     
-    public StateBasedGame getGame() { return game; }
+    public abstract void updateState();
     
-    public GameCanvas getGameCanvas() { return canvas; }
+    public abstract void draw(Graphics g);
+    
+    public boolean isKeyJustDown(int key)
+    {
+        return keys.isKeyJustDown(key);
+    }
+    
+    public boolean isKeyDown(int key) 
+    {
+        return keys.isKeyDown(key);
+    }
+    
+    private class GamePanel extends Element
+    {
+        private GameState state;
+        
+        public GamePanel(GameState state) 
+        {
+            this.state = state;
+        }
+        
+        @Override
+        public void drawElement(Graphics g)
+        {
+            if (hasParent()) 
+            {
+                setSize(getParent().getWidth(), getParent().getHeight());
+            }
+            
+            state.draw(g);
+        }
+
+        @Override
+        public void drawElementOverlay(Graphics g)
+        {
+            // TODO Auto-generated method stub
+            
+        }
+
+        @Override
+        public void onResize()
+        {
+            
+        }
+
+        @Override
+        public void onMouseMove(int x, int y)
+        {
+            // TODO Auto-generated method stub
+            
+        }
+
+        @Override
+        public void onMousePress(int x, int y, int button)
+        {
+            // TODO Auto-generated method stub
+            
+        }
+
+        @Override
+        public void onMouseRelease(int x, int y, int button)
+        {
+            // TODO Auto-generated method stub
+            
+        }
+
+        @Override
+        public void onKeyPress(int key)
+        {
+            keys.keyPressed(key);
+        }
+
+        @Override
+        public void onKeyRelease(int key)
+        {
+            keys.keyReleased(key);
+        }
+        
+    }
 }

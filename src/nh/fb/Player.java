@@ -1,12 +1,10 @@
 package nh.fb;
 
-import nh.core.GameState;
+import nh.core.Keyboard;
 
 public class Player
 {
     private PlayerSettings settings;
-    
-    private int leftTime, rightTime, downTime;
     
     public Player(PlayerSettings settings) 
     {
@@ -15,14 +13,27 @@ public class Player
     
     public PlayerSettings getSettings() { return settings; }
     
-    public void update(GameState input, FallingBlocks game) 
+    private boolean isKeyPressValid(Keyboard input, int key) 
     {
-        int waitTime = 8;
-        int dropWaitTime = 4;
+        int down = input.getKeyDownTime(key);
+        int wait = settings.getKeyWait();
         
-        /*
-         * player input
-         */
+        return input.isKeyJustDown(key) || down == wait ||
+               (down > wait && (down - wait) % settings.getKeyRepeat() == 0);
+    }
+    
+    public void update(Keyboard input, FallingBlocks game) 
+    {
+        if (isKeyPressValid(input, settings.getLeftKey())) 
+        {
+            game.movePieceLeft();
+        }
+        
+        if (isKeyPressValid(input, settings.getRightKey())) 
+        {
+            game.movePieceRight();
+        }
+        
         if (input.isKeyJustDown(settings.getRotCWKey()) || input.isKeyJustDown(settings.getSecRotCWKey())) 
         {
             game.rotatePieceCW();
@@ -33,57 +44,80 @@ public class Player
             game.rotatePieceCCW();
         }
         
-        if (input.isKeyDown(settings.getLeftKey())) 
-        {
-            leftTime++;
-        }
-        else 
-        {
-            leftTime = 0;
-        }
-        
-        if ((leftTime - 1) % waitTime == 0) 
-        {
-            game.movePieceLeft();
-        }
-        
-        if (input.isKeyDown(settings.getRightKey())) 
-        {
-            rightTime++;
-        }
-        else 
-        {
-            rightTime = 0;
-        }
-        
-        if ((rightTime - 1) % waitTime == 0) 
-        {
-            game.movePieceRight();
-        }
-        
-        if (input.isKeyDown(settings.getDownKey())) 
-        {
-            downTime++;
-        }
-        else 
-        {
-            downTime = 0;
-        }
-        
-        if ((downTime - 1) % dropWaitTime == 0) 
-        {
-            boolean dropped = game.movePieceDown();
-            game.resetFallTime();
-            
-            if (!dropped) 
-            {
-                game.lockAndGetNextPiece();
-            }
-        }
-        
         if (input.isKeyJustDown(settings.getHardDropKey())) 
         {
             game.hardDropPiece();
         }
+        
+        if (isKeyPressValid(input, settings.getDownKey())) 
+        {
+            game.movePieceDown();
+        }
+        
+        /*
+         * player input
+         */
+//        if (input.isKeyJustDown(settings.getRotCWKey())) 
+//        {
+//            game.rotatePieceCW();
+//        }
+//        
+//        if (input.isKeyJustDown(settings.getRotCCWKey())) 
+//        {
+//            game.rotatePieceCCW();
+//        }
+//        
+//        if (input.isKeyDown(settings.getLeftKey())) 
+//        {
+//            leftTime++;
+//        }
+//        else 
+//        {
+//            leftTime = 0;
+//        }
+//        
+//        if ((leftTime - 1) % waitTime == 0) 
+//        {
+//            game.movePieceLeft();
+//        }
+//        
+//        if (input.isKeyDown(settings.getRightKey())) 
+//        {
+//            rightTime++;
+//        }
+//        else 
+//        {
+//            rightTime = 0;
+//        }
+//        
+//        if ((rightTime - 1) % waitTime == 0) 
+//        {
+//            game.movePieceRight();
+//        }
+//        
+//        if (input.isKeyDown(settings.getDownKey())) 
+//        {
+//            downTime++;
+//        }
+//        else 
+//        {
+//            downTime = 0;
+//        }
+//        
+//        if ((downTime - 1) % dropWaitTime == 0) 
+//        {
+//            boolean dropped = game.movePieceDown();
+//            game.resetFallTime();
+//            
+//            if (!dropped) 
+//            {
+//                game.lockAndGetNextPiece();
+//            }
+//        }
+//        
+//        if (input.isKeyJustDown(settings.getHardDropKey())) 
+//        {
+//            game.hardDropPiece();
+//        }
     }
 }
