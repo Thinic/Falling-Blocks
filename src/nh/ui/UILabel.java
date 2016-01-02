@@ -1,10 +1,10 @@
-package nh.gui;
+package nh.ui;
 
 import java.awt.Graphics;
 
-public class Label extends Element
+public class UILabel extends UIElement
 {
-    public Label() 
+    public UILabel() 
     {
         super();
     }

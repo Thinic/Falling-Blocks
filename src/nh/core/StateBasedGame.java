@@ -2,7 +2,7 @@ package nh.core;
 
 import java.util.HashMap;
 
-import nh.gui.Window;
+import nh.ui.Window;
 
 public abstract class StateBasedGame
 {
@@ -53,7 +53,7 @@ public abstract class StateBasedGame
             
             try
             {
-                Thread.sleep(16);
+                Thread.sleep(1000 / 100);
             } catch (InterruptedException e)
             {
                 // TODO Auto-generated catch block

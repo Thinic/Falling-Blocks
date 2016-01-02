@@ -4,12 +4,17 @@ import java.awt.Color;
 import java.awt.Graphics;
 
 import nh.core.GameState;
-import nh.gui.Element;
-import nh.gui.SceneUtil;
+import nh.ui.SceneUtil;
+import nh.ui.UIActionEvent;
+import nh.ui.UIActionListener;
+import nh.ui.UIButton;
+import nh.ui.UIElement;
 
-public class TitleState extends GameState
+public class TitleState extends GameState implements UIActionListener
 {
     private static final Color back = new Color(0xCCEEFF);
+    
+    private UIButton exitBtn, optionsBtn, helpBtn, duelBtn, playBtn;
     
     public TitleState(Game game)
     {
@@ -17,15 +22,15 @@ public class TitleState extends GameState
         
         SceneUtil util = getSceneUtil();
         
-        util.offsetType = Element.BOTTOM_CENTER;
+        util.offsetType = UIElement.BOTTOM_CENTER;
         
-        util.createButton("Exit", ActionUtil.exitAction(getGame()));
-        util.createButton("Options", ActionUtil.changeState(getGame(), Game.STATE_OPTIONS));
-        util.createButton("Tutorial", ActionUtil.changeState(getGame(), Game.STATE_HELP));
-        util.createButton("2 Player", ActionUtil.changeState(getGame(), Game.STATE_DUEL));
-        util.createButton("1 Player", ActionUtil.changeState(getGame(), Game.STATE_PLAY));
+        exitBtn    = util.createButton("Exit", this);
+        optionsBtn = util.createButton("Options", this);
+        helpBtn    = util.createButton("Tutorial", this);
+        duelBtn    = util.createButton("2 Player", this);
+        playBtn    = util.createButton("1 Player", this);
         
-        util.offsetType = Element.TOP | Element.CENTER_X;
+        util.offsetType = UIElement.TOP | UIElement.CENTER_X;
         util.paddingY = 100;
         util.reset();
 
@@ -52,5 +57,31 @@ public class TitleState extends GameState
         g.setColor(back);
         g.fillRect(0, 0, getWidth(), getHeight());
     }
-    
+
+    @Override
+    public void actionPerformed(UIActionEvent e)
+    {
+        UIElement source = e.getSource();
+        
+        if (source == exitBtn) 
+        {
+            getGame().stop();
+        }
+        else if (source == playBtn) 
+        {
+            changeGameState(Game.STATE_PLAY);
+        }
+        else if (source == duelBtn) 
+        {
+            changeGameState(Game.STATE_DUEL);
+        }
+        else if (source == optionsBtn) 
+        {
+            changeGameState(Game.STATE_OPTIONS);
+        }
+        else if (source == helpBtn) 
+        {
+            changeGameState(Game.STATE_HELP);
+        }
+    }
 }

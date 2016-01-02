@@ -1,17 +1,22 @@
-package nh.gui;
+package nh.ui;
 
 
 public class Scene
 {
-    private Element root;
+    private UIElement root;
     private int x, y;
     
     public Scene() 
     {
-        root = new Panel();
+        root = new UIPanel();
     }
     
-    public synchronized Element getRoot() 
+    public Scene(UIElement e) 
+    {
+        root = e;
+    }
+    
+    public synchronized UIElement getRoot() 
     {
         return root;
     }
@@ -21,12 +26,12 @@ public class Scene
         getRoot().setSize(width, height);
     }
     
-    public void add(Element e) 
+    public void add(UIElement e) 
     {
         getRoot().add(e);
     }
     
-    public void remove(Element e) 
+    public void remove(UIElement e) 
     {
         getRoot().remove(e);
     }
@@ -39,9 +44,9 @@ public class Scene
         this.x = x;
         this.y = y;
         
-        getRoot().onEvent(new Event() {
+        getRoot().onEvent(new UIEvent() {
             @Override
-            public void perform(Element e)
+            public void perform(UIElement e)
             {
                 e.onMouseMove(x, y);
             }
@@ -50,9 +55,9 @@ public class Scene
     
     public void mousePressed(final int button) 
     {
-        getRoot().onEvent(new Event() {
+        getRoot().onEvent(new UIEvent() {
             @Override
-            public void perform(Element e)
+            public void perform(UIElement e)
             {
                 e.onMousePress(x, y, button);
             }
@@ -61,9 +66,9 @@ public class Scene
     
     public void mouseReleased(final int button) 
     {
-        getRoot().onEvent(new Event() {
+        getRoot().onEvent(new UIEvent() {
             @Override
-            public void perform(Element e)
+            public void perform(UIElement e)
             {
                 e.onMouseRelease(x, y, button);
             }
@@ -72,9 +77,9 @@ public class Scene
     
     public void keyPressed(final int key) 
     {
-        getRoot().onEvent(new Event() {
+        getRoot().onEvent(new UIEvent() {
             @Override
-            public void perform(Element e)
+            public void perform(UIElement e)
             {
                 e.onKeyPress(key);
             }
@@ -83,9 +88,9 @@ public class Scene
     
     public void keyReleased(final int key) 
     {
-        getRoot().onEvent(new Event() {
+        getRoot().onEvent(new UIEvent() {
             @Override
-            public void perform(Element e)
+            public void perform(UIElement e)
             {
                 e.onKeyRelease(key);
             }

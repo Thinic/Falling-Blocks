@@ -1,4 +1,4 @@
-package nh.gui;
+package nh.ui;
 
 import java.awt.Color;
 import java.awt.Font;

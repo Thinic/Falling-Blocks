@@ -2,9 +2,9 @@ package nh.core;
 
 import java.awt.Graphics;
 
-import nh.gui.Element;
-import nh.gui.Scene;
-import nh.gui.SceneUtil;
+import nh.ui.Scene;
+import nh.ui.SceneUtil;
+import nh.ui.UIElement;
 
 public abstract class GameState
 {
@@ -87,7 +87,7 @@ public abstract class GameState
         return keys.isKeyDown(key);
     }
     
-    private class GamePanel extends Element
+    private class GamePanel extends UIElement
     {
         private GameState state;
         

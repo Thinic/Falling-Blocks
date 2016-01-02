@@ -22,36 +22,36 @@ public class Player
                (down > wait && (down - wait) % settings.getKeyRepeat() == 0);
     }
     
-    public void update(Keyboard input, FallingBlocks game) 
+    public void update(Keyboard input, FallingBlocksGame game) 
     {
         if (isKeyPressValid(input, settings.getLeftKey())) 
         {
-            game.movePieceLeft();
+            game.moveLeft();
         }
         
         if (isKeyPressValid(input, settings.getRightKey())) 
         {
-            game.movePieceRight();
+            game.moveRight();
         }
         
         if (input.isKeyJustDown(settings.getRotCWKey()) || input.isKeyJustDown(settings.getSecRotCWKey())) 
         {
-            game.rotatePieceCW();
+            game.rotateCW();
         }
         
         if (input.isKeyJustDown(settings.getRotCCWKey())) 
         {
-            game.rotatePieceCCW();
+            game.rotateCCW();
         }
         
         if (input.isKeyJustDown(settings.getHardDropKey())) 
         {
-            game.hardDropPiece();
+            game.hardDrop();
         }
         
         if (isKeyPressValid(input, settings.getDownKey())) 
         {
-            game.movePieceDown();
+            game.moveDown();
         }
         
         /*

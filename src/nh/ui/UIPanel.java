@@ -1,13 +1,13 @@
-package nh.gui;
+package nh.ui;
 
 import java.awt.Color;
 import java.awt.Graphics;
 
-public class Panel extends Element
+public class UIPanel extends UIElement
 {
     private Color background = Color.GRAY;
     
-    public Panel() 
+    public UIPanel() 
     {
         setBackground(0xCFCFCF);
     }
@@ -15,6 +15,11 @@ public class Panel extends Element
     public void setBackground(int col) 
     {
         background = new Color(col);
+    }
+    
+    public int getBackground() 
+    {
+        return background.getRGB();
     }
     
     @Override

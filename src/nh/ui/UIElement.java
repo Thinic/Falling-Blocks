@@ -1,4 +1,4 @@
-package nh.gui;
+package nh.ui;
 
 import java.awt.Graphics;
 import java.util.ArrayList;
@@ -6,7 +6,7 @@ import java.util.ArrayList;
 /*
  * basic element for gui
  */
-public abstract class Element
+public abstract class UIElement
 {
     /*
      * positioning
@@ -23,9 +23,11 @@ public abstract class Element
     
     public static final int       TOP_LEFT      = TOP | LEFT;
     public static final int       TOP_RIGHT     = TOP | RIGHT;
+    public static final int       TOP_CENTER    = TOP | CENTER_X;
     public static final int       BOTTOM_LEFT   = BOTTOM | LEFT;
     public static final int       BOTTOM_RIGHT  = BOTTOM | RIGHT;
     public static final int       BOTTOM_CENTER = BOTTOM | CENTER_X;
+    public static final int       CENTER        = CENTER_Y | CENTER_X;
     
     public static final int       DEFAULT       = TOP_LEFT;
     
@@ -39,17 +41,69 @@ public abstract class Element
      */
     private int ox, oy, oType;
     
-    private Element parent;
-    private ArrayList<Element> children;
+    private UIElement parent;
+    private ArrayList<UIElement> children;
     
     private String text;
     private int fontSize = 20;
     
-    public Element() 
+    private boolean visible = true, maxWidth, maxHeight;
+    
+    private ArrayList<UIActionListener> listeners;
+    
+    public UIElement() 
     {
         children = new ArrayList<>();
         
+        listeners = new ArrayList<>();
+        
         setParent(null);
+    }
+    
+    protected void performAction() 
+    {
+        UIActionEvent e = new UIActionEvent(this);
+        
+        for (UIActionListener al : listeners) 
+        {
+            al.actionPerformed(e);
+        }
+    }
+    
+    public void addUIActionListener(UIActionListener e) 
+    {
+        listeners.add(e);
+    }
+    
+    public void setMaximized(boolean m) 
+    {
+        maxWidth = m;
+        maxHeight = m;
+    }
+    
+    public boolean isMaximized() 
+    {
+        return maxWidth && maxHeight;
+    }
+    
+    public void setMaximizedVertical(boolean m) 
+    {
+        maxWidth = m;
+    }
+    
+    public void setMaximizedHorizontal(boolean m) 
+    {
+        maxHeight = m;
+    }
+    
+    public boolean isMaximizedVertical() 
+    {
+        return maxWidth;
+    }
+    
+    public boolean isMaximizedHorizontal() 
+    {
+        return maxHeight;
     }
     
     /*
@@ -57,16 +111,20 @@ public abstract class Element
      */
     public void draw(Graphics g) 
     {
+        if (!isVisible()) return;
+        
         drawElement(g);
         
-        for (Element c : children) c.draw(g);
+        for (UIElement c : children) c.draw(g);
     }
     
     public void drawOverlay(Graphics g) 
     {
+        if (!isVisible()) return;
+        
         drawElementOverlay(g);
         
-        for (Element c : children) c.drawOverlay(g);
+        for (UIElement c : children) c.drawOverlay(g);
     }
     
     /*
@@ -75,6 +133,26 @@ public abstract class Element
     public abstract void drawElement(Graphics g);
     
     public abstract void drawElementOverlay(Graphics g);
+    
+    public boolean isVisible() 
+    {
+        return visible;
+    }
+    
+    public void setVisible(boolean v) 
+    {
+        visible = v;
+    }
+    
+    public void show() 
+    {
+        setVisible(true);
+    }
+    
+    public void hide() 
+    {
+        setVisible(false);
+    }
     
     public String getText() 
     {
@@ -124,6 +202,12 @@ public abstract class Element
                     break;
             }
             
+            if (isMaximizedHorizontal()) 
+            {
+                x = 0;
+                w = pWidth;
+            }
+            
             switch (getOffsetType() & Y_BITS) 
             {
                 case BOTTOM:
@@ -135,23 +219,29 @@ public abstract class Element
                 case TOP: default:
                     y = offY;
                     break;
-            }            
+            }     
+            
+            if (isMaximizedVertical()) 
+            {
+                y = 0;
+                h = pHeight;
+            }
         }
         
-        for (Element c : children) c.updateLocation();
+        for (UIElement c : children) c.updateLocation();
     }
     
     /*
      * parent util
      */
-    public void setParent(Element e) 
+    public void setParent(UIElement e) 
     {
         parent = e;
         
         updateLocation();
     }
     
-    public Element getParent() 
+    public UIElement getParent() 
     {
         return parent;
     }
@@ -164,21 +254,21 @@ public abstract class Element
     /*
      * child util
      */
-    public void add(Element e) 
+    public void add(UIElement e) 
     {
         e.setParent(this);
         
         children.add(e);
     }
     
-    public void remove(Element e) 
+    public void remove(UIElement e) 
     {
         e.setParent(null);
         
         children.remove(e);
     }
     
-    public boolean contains(Element e) 
+    public boolean contains(UIElement e) 
     {
         return children.contains(e);
     }
@@ -300,11 +390,13 @@ public abstract class Element
     /*
      * event
      */
-    public void onEvent(Event e) 
+    public void onEvent(UIEvent e) 
     {
+        if (!isVisible()) return;
+        
         e.perform(this);
         
-        for (Element c : children) c.onEvent(e);
+        for (UIElement c : children) c.onEvent(e);
     }
     
     public abstract void onMouseMove(int x, int y);

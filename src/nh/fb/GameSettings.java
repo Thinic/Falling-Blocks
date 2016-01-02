@@ -12,4 +12,8 @@ public class GameSettings
     public int getBoardHeight() { return 22; }
     
     public int getTicksPerSecond() { return 100; }
+    
+    public int getLockWaitTicks() { return 80; }
+
+    public int getInitialFallWaitTicks() { return 120; }
 }

@@ -1,57 +1,59 @@
-package nh.gui;
+package nh.ui;
 
 import java.awt.Color;
 import java.awt.Graphics;
 
-public class Counter extends ActionElement
+public class UISelector extends UIElement
 {
-    private Action increment, decrement;
+    private UIButton incBtn, decBtn;
     
-    private Button incBtn, decBtn;
+    private String[] values;
     
-    private volatile int value, min, max;
+    private int value;
     
-    public Counter() 
+    public UISelector() 
     {
         super();
         
-        final Counter counter = this;
+        final UISelector counter = this;
         
-        increment = new Action() {
-            public void performAction() {
-                value++;
+        incBtn = new UIButton();
+        decBtn = new UIButton();
+        
+        UIActionListener al = new UIActionListener() {
+            public void actionPerformed(UIActionEvent e) {
+                UIElement s = e.getSource();
                 
-                if (value > max) value = max;
-                
-                counter.performAction();
+                if (s == incBtn) 
+                {
+                    value++;
+                    
+                    if (value >= values.length) value = values.length - 1;
+                    
+                    counter.performAction();
+                }
+                else if (s == decBtn) 
+                {
+                    value--;
+                    
+                    if (value < 0) value = 0;
+                    
+                    counter.performAction();
+                }
             }
         };
         
-        decrement = new Action() {
-            public void performAction() {
-                value--;
-                
-                if (value < min) value = min;
-                
-                counter.performAction();
-            }
-        };
-        
-        incBtn = new Button();
-        incBtn.setAction(increment);
+        incBtn.addUIActionListener(al);
         incBtn.setText("+");
         incBtn.setOffset(0, 0);
         incBtn.setOffsetType(CENTER_Y | RIGHT);
         add(incBtn);
         
-        decBtn = new Button();
-        decBtn.setAction(decrement);
+        decBtn.addUIActionListener(al);
         decBtn.setText("-");
         decBtn.setOffset(0, 0);
         decBtn.setOffsetType(CENTER_Y | LEFT);
         add(decBtn);
-        
-        setBounds(Integer.MIN_VALUE, Integer.MAX_VALUE);
     }
     
     public int getValue() 
@@ -59,15 +61,20 @@ public class Counter extends ActionElement
         return value;
     }
     
+    public String getValueText() 
+    {
+        if (values == null || value < 0 && value >= values.length) return "N/A";
+        else return values[value];
+    }
+    
     public void setValue(int v) 
     {
         value = v;
     }
     
-    public void setBounds(int min, int max) 
+    public void setSelections(String[] values) 
     {
-        this.min = min;
-        this.max = max;
+        this.values = values;
     }
 
     @Override
@@ -81,7 +88,9 @@ public class Counter extends ActionElement
         tr.setContext(g);
         tr.textSize = 20;
         
-        tr.draw("" + value, getAbsX() + getWidth()/2, getAbsY() + getHeight()/2);
+        String text = getValueText();
+        
+        tr.draw(text, getAbsX() + getWidth()/2, getAbsY() + getHeight()/2);
     }
 
     @Override

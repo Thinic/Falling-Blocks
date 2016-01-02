@@ -1,16 +1,16 @@
-package nh.gui;
+package nh.ui;
 
 public class SceneUtil
 {
     public int paddingX = 0, paddingY = 2;
-    public int offsetType = Element.TOP_LEFT;
+    public int offsetType = UIElement.TOP_LEFT;
     
     public int buttonWidth = 200;
     public int buttonHeight = 40;
     
     public boolean horizontal = false;
     
-    private int x, y;
+    public int x, y;
     
     private Scene scene;
     
@@ -27,64 +27,58 @@ public class SceneUtil
         y = paddingY;
     }
     
-    public Button createButton(String text) 
+    public void addElement(UIElement e) 
     {
-        return createButton(text, null);
+        setProps(e, e.getWidth(), e.getHeight());
     }
     
-    public Button createButton(String text, Action action) 
+    public UIButton createButton(String text, UIActionListener listener) 
     {
-        Button e = new Button();
+        UIButton b = createButton(text);
+        b.addUIActionListener(listener);
+        return b;
+    }
+    
+    public UIButton createButton(String text) 
+    {
+        UIButton e = new UIButton();
         
         setProps(e, buttonWidth, buttonHeight);
         e.setText(text);
-        e.setAction(action);
         
         return e;
     }
     
-    public ToggleButton createToggleButton(String text) 
+    public UISelector createSelector(int value, String[] values) 
     {
-        return createToggleButton(text, null);
-    }
-    
-    public ToggleButton createToggleButton(String text, ToggleAction action) 
-    {
-        ToggleButton e = new ToggleButton();
-        
+        UISelector e = new UISelector();
+        e.setValue(value);
+        e.setSelections(values);
         setProps(e, buttonWidth, buttonHeight);
-        e.setText(text);
-        e.setAction(action);
         
         return e;
     }
     
-    public Counter createCounter(int value, int min, int max) 
+    public UICounter createCounter(int value, int min, int max) 
     {
-        return createCounter(value, min, max, null);
-    }
-    
-    public Counter createCounter(int value, int min, int max, Action action) 
-    {
-        Counter e = new Counter();
+        UICounter e = new UICounter();
         e.setValue(value);
         e.setBounds(min, max);
-        e.setAction(action);
         setProps(e, buttonWidth, buttonHeight);
         
         return e;
     }
     
-    public Label createLabel(String text) 
+    public UILabel createLabel(String text) 
     {
-        Label e = new Label();
+        UILabel e = new UILabel();
         e.setText(text);
         setProps(e, buttonWidth, buttonHeight);
         
         return e;
     }
     
-    private void setProps(Element e, int w, int h) 
+    private void setProps(UIElement e, int w, int h) 
     {
         e.setSize(w, h);
         e.setOffset(x, y);

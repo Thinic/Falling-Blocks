@@ -1,20 +1,19 @@
-package nh.gui;
+package nh.ui;
 
 import java.awt.Color;
 import java.awt.Graphics;
 
-public class ToggleButton extends ToggleElement
+public class UIButton extends UIElement
 {
-    private static final Color normal = new Color(0x9F9F9F), 
-                               hover = new Color(0x9F9FAF),
-                               click = new Color(0x6F6F6F),
-                               pressed = new Color(0x7F7F7F);
+    private static final Color normal = new Color(0x9F9F9F),
+                               hover  = new Color(0x9F9FAF),
+                               click  = new Color(0x6F6F6F);
     
-    private boolean            isHover, isPress;
+    private boolean isHover, isPress;
     
     private TextRenderer textRenderer;
     
-    public ToggleButton() 
+    public UIButton() 
     {
         textRenderer = new TextRenderer();
     }
@@ -22,21 +21,17 @@ public class ToggleButton extends ToggleElement
     @Override
     public void drawElement(Graphics g)
     {
-        if (isPress)
+        if (isPress) 
         {
             g.setColor(click);
-        } 
-        else
+        }
+        else 
         {
-            if (isToggled()) 
-            {
-                g.setColor(pressed);
-            }
-            else if (isHover)
+            if (isHover) 
             {
                 g.setColor(hover);
-            } 
-            else
+            }
+            else 
             {
                 g.setColor(normal);
             }
@@ -55,37 +50,42 @@ public class ToggleButton extends ToggleElement
     {
         
     }
-    
+
     @Override
     public void onMouseMove(int x, int y)
     {
         isHover = inBounds(x, y);
     }
-    
+
     @Override
     public void onMousePress(int x, int y, int button)
     {
         isPress = inBounds(x, y);
     }
-    
+
     @Override
     public void onMouseRelease(int x, int y, int button)
     {
-        if (isPress && inBounds(x, y)) toggle();
+        if (isPress && inBounds(x, y)) onClick(); 
         
         isPress = false;
     }
-    
+
     @Override
     public void onKeyPress(int key)
     {
         
     }
-    
+
     @Override
     public void onKeyRelease(int key)
     {
         
+    }
+    
+    public void onClick() 
+    {
+        performAction();
     }
 
     @Override
