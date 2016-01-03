@@ -6,6 +6,7 @@ import java.awt.Graphics2D;
 import nh.fb.board.BlockData;
 import nh.fb.board.Board;
 import nh.fb.board.Piece;
+import nh.fb.board.PieceType;
 
 public class BasicBoardRenderer implements IBoardRenderer
 {
@@ -209,5 +210,11 @@ public class BasicBoardRenderer implements IBoardRenderer
         
         g.fillRect(x - border, y - border, width + doubleBorder, border);
         g.fillRect(x - border, y + height, width + doubleBorder, border);
+    }
+
+    @Override
+    public void drawNextPiece(Graphics2D g, PieceType type, int x, int y, int size)
+    {
+        int width = type.getWidth() * size;
     }
 }

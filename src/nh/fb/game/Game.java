@@ -18,6 +18,7 @@ public class Game extends StateBasedGame
         addGameState(STATE_TITLE, new TitleState(this));
         addGameState(STATE_PLAY, new PlayState(this));
         addGameState(STATE_OPTIONS, new OptionsState(this));
+        addGameState(STATE_DUEL, new DuelState(this));
     }
 
     @Override

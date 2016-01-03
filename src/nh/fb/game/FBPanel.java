@@ -37,6 +37,8 @@ public class FBPanel extends UIPanel
         
         int width = game.getBoard().getWidth() * size;
         
+        setWidth(width);
+        
         br.draw((Graphics2D)g, 
                 game.getBoard(), 
                 game.getPiece(), 
