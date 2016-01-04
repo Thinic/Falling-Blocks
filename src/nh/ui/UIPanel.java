@@ -27,7 +27,7 @@ public class UIPanel extends UIElement
     {
         g.setColor(background);
         
-        g.fillRect(getAbsX(), getAbsY(), getWidth(), getHeight());
+        g.fillRect(0, 0, getWidth(), getHeight());
     }
 
     @Override

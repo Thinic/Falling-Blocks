@@ -254,7 +254,7 @@ public class PieceType
         {
             for (int y = 0; y < getHeight(); y++) 
             {
-                if (getValue(x, y, rot) != 0) return x;
+                if (getValue(x, y, rot) != 0) return getWidth() - 1 - x;
             }
         }
         
@@ -270,7 +270,7 @@ public class PieceType
         {
             for (int x = 0; x < getWidth(); x++) 
             {
-                if (getValue(x, y, rot) != 0) return y;
+                if (getValue(x, y, rot) != 0) return getHeight() - 1 - y;
             }
         }
         

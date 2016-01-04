@@ -1,6 +1,6 @@
 package nh.fb.gfx;
 
-import java.awt.Graphics2D;
+import java.awt.Graphics;
 
 public abstract class BlockRenderer
 {   
@@ -26,7 +26,7 @@ public abstract class BlockRenderer
     
     public static final int FLAGS_ALL = 0xFFFF;
     
-    public abstract void draw(Graphics2D g, int type, int id, int flags, int x, int y, int size);
+    public abstract void draw(Graphics g, int type, int id, int flags, int x, int y, int size);
     
     public static boolean hasFlag(int flags, int flagsToTest) 
     {

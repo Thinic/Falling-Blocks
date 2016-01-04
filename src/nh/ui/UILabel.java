@@ -16,7 +16,7 @@ public class UILabel extends UIElement
         tr.setContext(g);
         tr.textSize = getFontSize();
         
-        tr.draw(getText(), getAbsCenterX(), getAbsCenterY());
+        tr.draw(getText(), getWidth()/2, getHeight()/2);
     }
     
     @Override

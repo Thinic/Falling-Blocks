@@ -8,6 +8,7 @@ import nh.fb.FallingBlocksGame;
 import nh.fb.GameSettings;
 import nh.fb.Player;
 import nh.fb.PlayerSettings;
+import nh.fb.ui.FBPanel;
 import nh.ui.SceneUtil;
 import nh.ui.UIActionEvent;
 import nh.ui.UIActionListener;

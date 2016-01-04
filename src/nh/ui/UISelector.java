@@ -82,7 +82,7 @@ public class UISelector extends UIElement
     {
         Color back = new Color(0xbbbbbb);
         g.setColor(back);
-        g.fillRect(getAbsX(), getAbsY(), getWidth(), getHeight());
+        g.fillRect(0, 0, getWidth(), getHeight());
         
         TextRenderer tr = new TextRenderer();
         tr.setContext(g);
@@ -90,7 +90,7 @@ public class UISelector extends UIElement
         
         String text = getValueText();
         
-        tr.draw(text, getAbsX() + getWidth()/2, getAbsY() + getHeight()/2);
+        tr.draw(text, getWidth()/2, getHeight()/2);
     }
 
     @Override

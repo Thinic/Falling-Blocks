@@ -1,4 +1,4 @@
-package nh.fb.game;
+package nh.fb.ui;
 
 import java.awt.Graphics;
 import java.awt.Graphics2D;
@@ -25,9 +25,9 @@ public class FBPanel extends UIPanel
     }
     
     @Override
-    public void draw(Graphics g) 
+    public void drawElement(Graphics g) 
     {
-        super.draw(g);
+        super.drawElement(g);
         
         int size = getHeight() - 60;
         
@@ -37,14 +37,15 @@ public class FBPanel extends UIPanel
         
         int width = game.getBoard().getWidth() * size;
         
-        setWidth(width);
+        setWidth(width);// + 100);
         
         br.draw((Graphics2D)g, 
                 game.getBoard(), 
                 game.getPiece(), 
                 game.getGhostPiece(), 
-                getAbsCenterX() - width/2, 
+                getWidth()/2 - width/2, 
                 10, 
                 size);
+        
     }
 }

@@ -194,18 +194,18 @@ public class FallingBlocksGame
          */
         moveAmount = type.getRightOffset(rotCurrent) - type.getRightOffset(rotOld);
         
-        current.move(-moveAmount, 0);
-        if (board.isPieceValid(current)) return;
         current.move(moveAmount, 0);
+        if (board.isPieceValid(current)) return;
+        current.move(-moveAmount, 0);
         
         /*
          * move up
          */
         moveAmount = type.getTopOffset(rotCurrent) - type.getTopOffset(rotOld);
         
-        current.move(0, -moveAmount);
-        if (board.isPieceValid(current)) return;
         current.move(0, moveAmount);
+        if (board.isPieceValid(current)) return;
+        current.move(0, -moveAmount);
         
         /*
          * move down
@@ -300,7 +300,7 @@ public class FallingBlocksGame
         
         current = pieceGen.create(type, 
                 board.getWidth()/2 - (int)Math.ceil(type.getWidth()/2.0), 
-                board.getHeight() - type.getTopOffset(0) - 1);
+                board.getHeight() - type.getHeight() + type.getTopOffset(0));
     }
     
     private void moveBufferUp() 

@@ -109,11 +109,15 @@ public abstract class UIElement
     /*
      * updating and rendering
      */
-    public void draw(Graphics g) 
+    public final void draw(Graphics g) 
     {
         if (!isVisible()) return;
         
+        g.translate(getAbsX(), getAbsY());
+        
         drawElement(g);
+        
+        g.translate(-getAbsX(), -getAbsY());
         
         for (UIElement c : children) c.draw(g);
     }
@@ -122,7 +126,11 @@ public abstract class UIElement
     {
         if (!isVisible()) return;
         
+        g.translate(getAbsX(), getAbsY());
+        
         drawElementOverlay(g);
+        
+        g.translate(-getAbsX(), -getAbsY());
         
         for (UIElement c : children) c.drawOverlay(g);
     }

@@ -1,7 +1,6 @@
 package nh.fb.game;
 
 import java.awt.Graphics;
-import java.awt.Graphics2D;
 import java.awt.event.KeyEvent;
 
 import nh.core.GameState;
@@ -9,8 +8,8 @@ import nh.fb.FallingBlocksGame;
 import nh.fb.GameSettings;
 import nh.fb.Player;
 import nh.fb.PlayerSettings;
-import nh.fb.gfx.BasicBoardRenderer;
-import nh.fb.gfx.IBoardRenderer;
+import nh.fb.ui.FBDrawPanel;
+import nh.fb.ui.FBPanel;
 import nh.ui.SceneUtil;
 import nh.ui.UIActionEvent;
 import nh.ui.UIActionListener;
@@ -28,6 +27,7 @@ public class PlayState extends GameState implements UIActionListener
     private UIButton returnBtn;
     
     private FBPanel fbPanel;
+    private FBDrawPanel p;
     
     public PlayState(Game game) 
     {
@@ -41,7 +41,11 @@ public class PlayState extends GameState implements UIActionListener
         fbPanel.setOffset(0, 0);
         fbPanel.setOffsetType(UIElement.CENTER);
         fbPanel.setMaximized(true);
-        getScene().add(fbPanel);
+//        getScene().add(fbPanel);
+        
+        p = new FBDrawPanel(fbGame, 24);
+        p.setOffset(0, -22);
+        getScene().add(p);
         
         SceneUtil util = getSceneUtil();
         util.offsetType = UIElement.BOTTOM_CENTER;
@@ -58,6 +62,7 @@ public class PlayState extends GameState implements UIActionListener
         fbGame = new FallingBlocksGame(settings);
         
         fbPanel.setGame(fbGame);
+        p.setGame(fbGame);
         
         playerSettings = new PlayerSettings();
         playerSettings.setLeftKey(KeyEvent.VK_LEFT);

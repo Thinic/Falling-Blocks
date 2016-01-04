@@ -1,7 +1,7 @@
 package nh.fb.gfx;
 
 import java.awt.Color;
-import java.awt.Graphics2D;
+import java.awt.Graphics;
 
 import nh.fb.board.BlockData;
 import nh.fb.board.Board;
@@ -20,7 +20,7 @@ public class BasicBoardRenderer implements IBoardRenderer
     }
 
     @Override
-    public void draw(Graphics2D g, Board b, Piece p, Piece ghost, int x, int y, int blockSize)
+    public void draw(Graphics g, Board b, Piece p, Piece ghost, int x, int y, int blockSize)
     {
         int startX = x;
         int startY = y + b.getHeight() * blockSize - blockSize;
@@ -213,8 +213,9 @@ public class BasicBoardRenderer implements IBoardRenderer
     }
 
     @Override
-    public void drawNextPiece(Graphics2D g, PieceType type, int x, int y, int size)
+    public void drawNextPiece(Graphics g, PieceType type, int x, int y, int size)
     {
-        int width = type.getWidth() * size;
+        x += (4 - type.getWidth()) * size / 2;
+        y += (4 - type.getHeight()) * size / 2;
     }
 }

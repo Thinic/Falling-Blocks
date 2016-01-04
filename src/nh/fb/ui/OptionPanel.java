@@ -1,4 +1,4 @@
-package nh.fb.game;
+package nh.fb.ui;
 
 import nh.ui.UIActionEvent;
 import nh.ui.UIActionListener;

@@ -3,6 +3,7 @@ package nh.fb.game;
 import java.awt.Graphics;
 
 import nh.core.GameState;
+import nh.fb.ui.OptionPanel;
 import nh.ui.Scene;
 import nh.ui.SceneUtil;
 import nh.ui.UIActionEvent;

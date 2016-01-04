@@ -37,12 +37,12 @@ public class UIButton extends UIElement
             }
         }
         
-        g.fillRect(getAbsX(), getAbsY(), getWidth(), getHeight());
+        g.fillRect(0, 0, getWidth(), getHeight());
         
         textRenderer.setContext(g);
         textRenderer.textSize = 20;
         textRenderer.textColor = 0x000000;
-        textRenderer.draw(getText(), getAbsX() + getWidth()/2, getAbsY() + getHeight()/2);
+        textRenderer.draw(getText(), getWidth()/2, getHeight()/2);
     }
     
     @Override

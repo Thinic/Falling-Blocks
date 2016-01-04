@@ -1,14 +1,14 @@
 package nh.fb.gfx;
 
 import java.awt.Color;
-import java.awt.Graphics2D;
+import java.awt.Graphics;
 
 import nh.fb.board.PieceType;
 
 public class BasicBlockRenderer extends BlockRenderer
 {
     @Override
-    public void draw(Graphics2D g, int type, int id, int flags, int x, int y, int size)
+    public void draw(Graphics g, int type, int id, int flags, int x, int y, int size)
     {
         g.setColor(getColor(type));
         
