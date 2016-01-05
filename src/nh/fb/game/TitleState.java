@@ -25,8 +25,8 @@ public class TitleState extends GameState implements UIActionListener
         util.offsetType = UIElement.BOTTOM_CENTER;
         
         exitBtn    = util.createButton("Exit", this);
-        optionsBtn = util.createButton("Options", this);
-        helpBtn    = util.createButton("Tutorial", this);
+//        optionsBtn = util.createButton("Options", this);
+//        helpBtn    = util.createButton("Tutorial", this);
         duelBtn    = util.createButton("2 Player", this);
         playBtn    = util.createButton("1 Player", this);
         

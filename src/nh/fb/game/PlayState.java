@@ -43,7 +43,7 @@ public class PlayState extends GameState implements UIActionListener
         fbPanel.setMaximized(true);
 //        getScene().add(fbPanel);
         
-        p = new FBDrawPanel(fbGame, 24);
+        p = new FBDrawPanel(fbGame, 22);
         p.setOffset(0, -22);
         getScene().add(p);
         
@@ -89,6 +89,12 @@ public class PlayState extends GameState implements UIActionListener
     @Override
     public void draw(Graphics g)
     {
+        int sizeHeight = (getHeight() - 50) / (fbGame.getBoard().getHeight() + 2);
+        
+        int sizeWidth  = (getWidth() - 100) / (fbGame.getBoard().getWidth() + 10);
+        
+        p.setSize(Math.min(sizeHeight, sizeWidth));
+        
 //        int size = 24;
 //        
 //        IBoardRenderer br = new BasicBoardRenderer();

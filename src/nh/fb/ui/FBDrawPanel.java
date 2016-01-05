@@ -20,19 +20,28 @@ public class FBDrawPanel extends UIPanel
     
     private FallingBlocksGame game;
     private int size;
-    private int borderSize;
+    
+    private final int holdWidth = 6;
+    private final int holdHeight = 6;
+    private final int holdYFromTop = 8;
+    
+    private BasicBlockRenderer blockRenderer = new BasicBlockRenderer();
+    private GhostBlockRenderer ghostRenderer = new GhostBlockRenderer();
     
     public FBDrawPanel(FallingBlocksGame game, int size) 
     {
         setGame(game);
         this.size = size;
         
-        borderSize = 10;
-        
         setOffset(0, 0);
         setOffsetType(CENTER);
         
         resize();
+    }
+    
+    public void setSize(int s) 
+    {
+        size = s;
     }
     
     public void setGame(FallingBlocksGame game) 
@@ -47,8 +56,8 @@ public class FBDrawPanel extends UIPanel
         int gameWidth = game.getBoard().getWidth();
         int gameHeight = game.getBoard().getHeight();
         
-        setWidth(gameWidth * size + borderSize * 2);
-        setHeight(gameHeight * size + borderSize * 2);
+        setWidth(getBlockSizeX(gameWidth + holdWidth*2));
+        setHeight(getBlockSizeY(gameHeight + 2));
     }
     
     @Override
@@ -57,137 +66,181 @@ public class FBDrawPanel extends UIPanel
         // not call super, so that it is transparent
         resize();
         
-        drawBackground(g);
+//        g.setColor(Color.GREEN);
+//        g.fillRect(0, 0, getWidth(), getHeight());
         
-        g.translate(borderSize, borderSize);
+        drawGameBackground(g);
         drawBoard(g);
         drawGhostPiece(g);
         drawPiece(g);
-        g.translate(-borderSize, -borderSize);
-        
         drawNextPieces(g);
-        
-        drawBorder(g);
+        drawGameOverlay(g);
     }
     
-    private void drawNextPieces(Graphics g)
+    private void drawNextPieces(Graphics g) 
     {
-        BlockRenderer br = new BasicBlockRenderer();
+        drawNextPiece(g);
         
-        drawNextPiece(g, br, 0);
-        drawNextPiece(g, br, 1);
-        drawNextPiece(g, br, 2);
-        drawNextPiece(g, br, 3);
-        drawNextPiece(g, br, 4);
+        drawNextPiece(g, 1);
+        drawNextPiece(g, 2);
+        drawNextPiece(g, 3);
     }
     
-    private void drawNextPiece(Graphics g, BlockRenderer br, int i) 
+    private void drawNextPiece(Graphics g, int i) 
     {
-        int padding = 3 * size;
-        
         PieceType type = game.getBufferAt(i);
         
-        int offX = (4 - type.getWidth()) * size / 2;
-        int offY = (4 - type.getHeight()) * size / 2;
+        int rot = 0;
+        int id = 0;
         
-        offY += type.getBottomOffset(0) * size / 2;
-        offY -= type.getTopOffset(0) * size / 2;
+        int boardx = holdWidth - 1;
+        int width = game.getBoard().getWidth() + 2;
+        int height = game.getBoard().getHeight() + 1 - 4*i;
         
-        if (i != 0) offY += 100;
+        double offX = (4 - type.getWidth() + type.getLeftOffset(0) - type.getRightOffset(0)) / 2.0;
+        double offY = (4 - type.getHeight() + type.getTopOffset(0) - type.getBottomOffset(0)) / 2.0;
         
-        drawPieceType(g, br, type, 0, 0, getWidth() + borderSize*2 + offX, i*padding + offY);
+        
+        
+        drawPieceType(g, blockRenderer, type, rot, id, boardx + width + offX, height - holdHeight - 1 + offY);
     }
-
-    private void drawGhostPiece(Graphics g)
+    
+    private void drawNextPiece(Graphics g) 
+    {
+        PieceType type = game.getBufferAt(0);
+        
+        int rot = 0;
+        int id = 0;
+        
+        int boardx = holdWidth - 1;
+        int width = game.getBoard().getWidth() + 2;
+        int height = game.getBoard().getHeight() + 2;
+        
+        double offX = (4 - type.getWidth() + type.getLeftOffset(0) - type.getRightOffset(0)) / 2.0;
+        double offY = (4 - type.getHeight() + type.getTopOffset(0) - type.getBottomOffset(0)) / 2.0;
+        
+        
+        
+        drawPieceType(g, blockRenderer, type, rot, id, boardx + width + offX, height - holdHeight - 1 + offY);
+    }
+    
+    private void drawGhostPiece(Graphics g) 
     {
         Piece piece = game.getGhostPiece();
         
-        BlockRenderer br = new GhostBlockRenderer();
+        int rot = piece.getRotation();
+        int id = piece.getID();
         
-        drawBoardPieceType(g, br, piece);
+        drawPieceType(g, ghostRenderer, piece.getType(), rot, id, piece.getX() + holdWidth, piece.getY() + 1);
     }
-
-    private void drawPiece(Graphics g)
+    
+    private void drawPiece(Graphics g) 
     {
         Piece piece = game.getPiece();
         
-        BlockRenderer br = new BasicBlockRenderer();
-        
-        drawBoardPieceType(g, br, piece);
-    }
-    
-    private void drawBoardPieceType(Graphics g, BlockRenderer br, Piece piece) 
-    {
-        int id = piece.getID();
         int rot = piece.getRotation();
+        int id = piece.getID();
         
-        PieceType type = piece.getType();
-        
-        int x = piece.getX();
-        int y = piece.getY();
-        
-        drawPieceType(g, br, type, rot, id, x * size, (game.getBoard().getHeight() - y - piece.getType().getHeight()) * size);
+        drawPieceType(g, blockRenderer, piece.getType(), rot, id, piece.getX() + holdWidth, piece.getY() + 1);
     }
     
-    private void drawPieceType(Graphics g, BlockRenderer br, PieceType type, int rot, int id, int tx, int ty) 
+    private void drawPieceType(Graphics g, BlockRenderer br, PieceType type, int rot, int id, double drawx, double drawy) 
     {
-        g.translate(tx, ty);
-        
-        for (int bx = 0; bx < type.getWidth(); bx++) 
+        for (int x = 0; x < type.getWidth(); x++) 
         {
-            for (int by = 0; by < type.getHeight(); by++) 
+            for (int y = 0; y < type.getHeight(); y++) 
             {
-                int flags = getFlagsForBlock(type, bx, by, rot);
+                int val = type.getValue(x, y, rot);
+                int flags = getFlagsForBlock(type, x, y, rot);
                 
-                int val = type.getValue(bx, by, rot);
-                
-                int x = bx * size;
-                int y = (type.getHeight() - by - 1) * size;
-                
-                if (val != 0) br.draw(g, val, id, flags, x, y, size);
+                if (val != 0) br.draw(g, val, id, flags, getBlockX(drawx + x), getBlockY(drawy + y + 1), size);
             }
         }
-        
-        g.translate(-tx, -ty);
-    }
-
-    private void drawBackground(Graphics g) 
-    {
-        g.setColor(Color.GRAY);
-        g.fillRect(0, 0, getWidth(), getHeight());
     }
     
-    private void drawBorder(Graphics g) 
+    private void drawBoard(Graphics g)
+    {
+        final int tx = holdWidth;
+        final int ty = 1;
+        
+        Board b = game.getBoard();
+        
+        for (int x = 0; x < b.getWidth(); x++) 
+        {
+            for (int y = 0; y < b.getHeight(); y++) 
+            {
+                int type = b.getValue(x, y);
+                int id = b.getID(x, y);
+                int flags = getFlagsForBlock(b, x, y);
+                
+                blockRenderer.draw(g, type, id, flags, getBlockX(tx + x), getBlockY(ty + y + 1), size);
+            }
+        }
+    }
+
+    private void drawGameBackground(Graphics g) 
+    {
+        g.setColor(Color.GRAY);
+        
+        int boardx = holdWidth - 1;
+        int boardy = 0;
+        int width = game.getBoard().getWidth() + 2;
+        int height = game.getBoard().getHeight() + 2;
+        
+        fillRect(g, boardx, boardy, width, height);
+        fillRect(g, 0, boardy + height - holdYFromTop, holdWidth, holdHeight);
+        fillRect(g, boardx+width-1, boardy + height - holdYFromTop, holdWidth, holdHeight);
+        fillRect(g, boardx+width-1, boardy+height-holdYFromTop - 5*3 + 2, holdWidth, 5*3 -1);
+    }
+    
+    private void drawGameOverlay(Graphics g) 
     {
         g.setColor(Color.BLACK);
         
-        g.fillRect(0, 0, getWidth(), borderSize);
-        g.fillRect(0, getHeight() - borderSize, getWidth(), borderSize);
-        g.fillRect(0, 0, borderSize, getHeight());
-        g.fillRect(getWidth() - borderSize, 0, borderSize, getHeight());
+        int boardx = holdWidth - 1;
+        int boardy = 0;
+        int width = game.getBoard().getWidth() + 2;
+        int height = game.getBoard().getHeight() + 2;
+        
+        drawRect(g, boardx, boardy, width, height);
+        drawRect(g, 0, boardy + height - holdYFromTop, holdWidth, holdHeight);
+        drawRect(g, boardx+width-1, boardy + height - holdYFromTop, holdWidth, holdHeight);
+        drawRect(g, boardx+width-1, boardy+height-holdYFromTop - 5*3 + 2, holdWidth, 5*3 -1);
     }
     
-    private void drawBoard(Graphics g) 
+    private void drawRect(Graphics g, double x, double y, double w, double h) 
     {
-        Board board = game.getBoard();
+        fillRect(g, x, y, 1, h);
+        fillRect(g, x, y, w, 1);
+        fillRect(g, x + w - 1, y, 1, h);
+        fillRect(g, x, y + h - 1, w, 1);
+    }
+    
+    private void fillRect(Graphics g, double x, double y, double w, double h) 
+    {
+        int height = getBlockSizeY(h);
         
-        BlockRenderer br = new BasicBlockRenderer();
-        
-        for (int bx = 0; bx < board.getWidth(); bx++) 
-        {
-            for (int by = 0; by < board.getHeight(); by++) 
-            {
-                int x = bx * size;
-                int y = (board.getHeight() - by - 1) * size;
-                
-                int flags = getFlagsForBlock(board, bx, by);
-                
-                int type = board.getValue(bx, by);
-                int id = board.getID(bx, by);
-                
-                br.draw(g, type, id, flags, x, y, size);
-            }
-        }
+        g.fillRect(getBlockX(x), getBlockY(y) - height, getBlockSizeX(w), height);
+    }
+    
+    private int getBlockX(double x) 
+    {
+        return getBlockSizeX(x);
+    }
+    
+    private int getBlockY(double y) 
+    {
+        return getHeight() - getBlockSizeY(y);
+    }
+    
+    private int getBlockSizeX(double x) 
+    {
+        return (int)(x * size);
+    }
+    
+    private int getBlockSizeY(double y) 
+    {
+        return (int)(y * size);
     }
     
     private int getFlagsForBlock(Board b, int bx, int by) 

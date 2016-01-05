@@ -8,7 +8,7 @@ import nh.fb.FallingBlocksGame;
 import nh.fb.GameSettings;
 import nh.fb.Player;
 import nh.fb.PlayerSettings;
-import nh.fb.ui.FBPanel;
+import nh.fb.ui.FBDrawPanel;
 import nh.ui.SceneUtil;
 import nh.ui.UIActionEvent;
 import nh.ui.UIActionListener;
@@ -21,7 +21,7 @@ public class DuelState extends GameState implements UIActionListener
     
     private GameSettings settings;
     private FallingBlocksGame game1, game2;
-    private FBPanel panel1, panel2;
+    private FBDrawPanel panel1, panel2;
     private PlayerSettings pSettings1, pSettings2;
     private Player player1, player2;
     
@@ -31,19 +31,25 @@ public class DuelState extends GameState implements UIActionListener
         
         SceneUtil util = getSceneUtil();
         
+        settings = new GameSettings();
+        game1 = new FallingBlocksGame(settings);
+        game2 = new FallingBlocksGame(settings);
+        
         util.offsetType = UIElement.BOTTOM_CENTER;
         util.reset();
         
-        panel1 = new FBPanel(null);
+        int size = 16;
+        
+        panel1 = new FBDrawPanel(game1, size);
         panel1.setMaximizedVertical(true);
-        panel1.setOffset(20, 0);
-        panel1.setOffsetType(UIElement.CENTER_Y | UIElement.LEFT);
+        panel1.setOffset(0, -22);
+        panel1.setOffsetType(UIElement.CENTER);
         getScene().add(panel1);
         
-        panel2 = new FBPanel(null);
+        panel2 = new FBDrawPanel(game2, size);
         panel2.setMaximizedVertical(true);
-        panel2.setOffset(20, 0);
-        panel2.setOffsetType(UIElement.CENTER_Y | UIElement.RIGHT);
+        panel2.setOffset(0, -22);
+        panel2.setOffsetType(UIElement.CENTER);
         getScene().add(panel2);
         
         returnBtn = util.createButton("Return to Menu", this);
@@ -100,8 +106,17 @@ public class DuelState extends GameState implements UIActionListener
     @Override
     public void draw(Graphics g)
     {
-        // TODO Auto-generated method stub
+        int sizeHeight = (getHeight() - 50) / (game1.getBoard().getHeight() + 2);
         
+        int sizeWidth  = (getWidth() - 150) / (game1.getBoard().getWidth() + 10) / 2;
+        
+        panel1.setSize(Math.min(sizeHeight, sizeWidth));
+        panel2.setSize(Math.min(sizeHeight, sizeWidth));
+        
+        int offset = 20;
+        
+        panel1.setOffset(-panel1.getWidth()/2 - offset, -22);
+        panel2.setOffset(panel2.getWidth()/2 + offset, -22);
     }
 
     @Override
