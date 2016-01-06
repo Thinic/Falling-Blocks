@@ -53,6 +53,8 @@ public abstract class UIElement
     
     public UIElement() 
     {
+        setText("");
+        
         children = new ArrayList<>();
         
         listeners = new ArrayList<>();

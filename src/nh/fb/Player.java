@@ -24,6 +24,8 @@ public class Player
     
     public void update(Keyboard input, FallingBlocksGame game) 
     {
+        if (input.isKeyJustDown(settings.getPauseKey())) game.setPaused(!game.isPaused());
+        
         if (isKeyPressValid(input, settings.getLeftKey())) 
         {
             game.moveLeft();

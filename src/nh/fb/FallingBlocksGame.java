@@ -10,6 +10,13 @@ import nh.fb.util.BagGenerator;
 
 public class FallingBlocksGame
 {
+    private static final int SCORE_TIME_DROP = 1;
+    private static final int SCORE_HARD_DROP = 5;
+    private static final int SCORE_SINGLE = 80;
+    private static final int SCORE_DOUBLE = 200;
+    private static final int SCORE_TRIPLE = 500;
+    private static final int SCORE_4_LINE = 800;
+    
     private PieceGenerator pieceGen;
     private PieceTypeGenerator pieceTypeGen;
     
@@ -20,9 +27,15 @@ public class FallingBlocksGame
     private GameSettings settings;
     private Board board;
     
-    private int ticksSinceLastFall;
+    private int ticksSinceLastFall, ticksBeforeFall;
     
     private int ticksSinceOnGround;
+    
+    private int timer, score, 
+                lines, linesToNextLevel,
+                level;
+    
+    private boolean pause = false, gameEnded = false;
     
     public FallingBlocksGame(GameSettings settings) 
     {
@@ -34,10 +47,34 @@ public class FallingBlocksGame
         
         pieceTypeGen = new BagGenerator(System.nanoTime());
         
+        timer = 0;
+        
+        score = 0;
+        
+        lines = 0;
+        linesToNextLevel = 4;
+        
+        level = 0;
+        
+        ticksBeforeFall = settings.getInitialFallWaitTicks();
+        
         pieceBuffer = new PieceType[5];
         fillPieceTypeBuffer();
         
         createNextPiece();
+    }
+    
+    public String getTime() 
+    {
+        float seconds = timer / (float)settings.getTicksPerSecond();
+        
+        int sec = (int)seconds;
+        int frac = (int)((seconds - sec) * 100);
+        int minutes = sec / 60;
+        
+        sec -= minutes*60;
+        
+        return minutes + ":" + String.format("%02d", sec) + "." + String.format("%02d", frac);
     }
     
     public GameSettings getGameSettings() { return settings; }
@@ -66,6 +103,19 @@ public class FallingBlocksGame
     
     public void update() 
     {
+        if (pause || gameEnded) return;
+        
+        timer++;
+        
+        while (lines >= linesToNextLevel) 
+        {
+            level++;
+            
+            linesToNextLevel += 4 + (int)((level + 1) * 1.5);
+            
+            ticksBeforeFall = (int) Math.floor(1.0 / (1 + 0.1*level*level) * settings.getInitialFallWaitTicks());
+        }
+        
         ticksSinceLastFall++;
         
         checkForLines();
@@ -80,6 +130,8 @@ public class FallingBlocksGame
             {
                 lockPiece();
                 
+                score += SCORE_TIME_DROP * (level+1);
+                
                 ticksSinceOnGround = 0;
             }
         }
@@ -88,15 +140,19 @@ public class FallingBlocksGame
             ticksSinceOnGround = 0;
         }
         
-        if (ticksSinceLastFall >= settings.getInitialFallWaitTicks()) 
+        boolean move = true;
+        
+        while (move && ticksSinceLastFall >= ticksBeforeFall) 
         {
-            movePieceDownNaturally();
+            move = movePieceDownNaturally();
             ticksSinceLastFall = 0;
         }
     }
     
     public boolean moveDown() 
     { 
+        if (pause || gameEnded) return false;
+        
         current.move(0, -1);
         
         if (board.isPieceValid(current)) 
@@ -111,6 +167,8 @@ public class FallingBlocksGame
     
     public boolean moveLeft() 
     {
+        if (pause || gameEnded) return false;
+        
         current.move(-1, 0);
         
         if (board.isPieceValid(current)) 
@@ -125,6 +183,8 @@ public class FallingBlocksGame
     
     public boolean moveRight() 
     {
+        if (pause || gameEnded) return false;
+        
         current.move(1, 0);
         
         if (board.isPieceValid(current)) 
@@ -139,6 +199,8 @@ public class FallingBlocksGame
     
     public boolean rotateCW() 
     {
+        if (pause || gameEnded) return false;
+        
         current.rotate(PieceType.ROT_CW);
         
         tryToValidatePiece(PieceType.ROT_CW);
@@ -155,6 +217,8 @@ public class FallingBlocksGame
     
     public boolean rotateCCW() 
     {
+        if (pause || gameEnded) return false;
+        
         current.rotate(PieceType.ROT_CCW);
         
         tryToValidatePiece(PieceType.ROT_CCW);
@@ -219,6 +283,8 @@ public class FallingBlocksGame
     
     public boolean hardDrop() 
     {
+        if (pause || gameEnded) return false;
+        
         while (board.isPieceValid(current)) 
         {
             current.move(0, -1);
@@ -228,17 +294,34 @@ public class FallingBlocksGame
         
         lockPiece();
         
+        score += SCORE_HARD_DROP * (level+1);
+        
         return true;
     }
     
     private void checkForLines() 
     {
+        int numLines = 0;
+        
         for (int y = board.getHeight() - 1; y >= 0; y--) 
         {
             if (board.isLineFull(y)) 
             {
                 board.clearLineAndDropAbove(y);
+                
+                numLines++;
             }
+        }
+        
+        lines += numLines;
+        
+        switch (numLines) 
+        {
+            case 1: score += SCORE_SINGLE * (level+1); break;
+            case 2: score += SCORE_DOUBLE * (level+1); break;
+            case 3: score += SCORE_TRIPLE * (level+1); break;
+            case 4: score += SCORE_4_LINE * (level+1); break;
+            default: break;
         }
     }
     
@@ -301,6 +384,11 @@ public class FallingBlocksGame
         current = pieceGen.create(type, 
                 board.getWidth()/2 - (int)Math.ceil(type.getWidth()/2.0), 
                 board.getHeight() - type.getHeight() + type.getTopOffset(0));
+        
+        if (!board.isPieceValid(current)) 
+        {
+            gameEnded = true;
+        }
     }
     
     private void moveBufferUp() 
@@ -314,5 +402,40 @@ public class FallingBlocksGame
     private void fillBufferLastPlace() 
     {
         pieceBuffer[pieceBuffer.length - 1] = pieceTypeGen.nextPieceType();
+    }
+
+    public int getScore()
+    {
+        return score;
+    }
+    
+    public int getLines() 
+    {
+        return lines;
+    }
+    
+    public int getLinesToNextLevel() 
+    {
+        return linesToNextLevel;
+    }
+    
+    public int getLevel() 
+    {
+        return level;
+    }
+    
+    public boolean isPaused() 
+    {
+        return pause;
+    }
+    
+    public void setPaused(boolean p) 
+    {
+        pause = p;
+    }
+    
+    public boolean isGameEnded() 
+    {
+        return gameEnded;
     }
 }

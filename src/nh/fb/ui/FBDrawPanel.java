@@ -10,6 +10,8 @@ import nh.fb.board.PieceType;
 import nh.fb.gfx.BasicBlockRenderer;
 import nh.fb.gfx.BlockRenderer;
 import nh.fb.gfx.GhostBlockRenderer;
+import nh.ui.UIElement;
+import nh.ui.UILabel;
 import nh.ui.UIPanel;
 
 public class FBDrawPanel extends UIPanel
@@ -28,6 +30,15 @@ public class FBDrawPanel extends UIPanel
     private BasicBlockRenderer blockRenderer = new BasicBlockRenderer();
     private GhostBlockRenderer ghostRenderer = new GhostBlockRenderer();
     
+    private UILabel timeText, timeDisplay, 
+                    holdLabel, nextLabel, 
+                    scoreText, scoreDisplay,
+                    levelText, levelDisplay,
+                    linesText, linesDisplay;
+    
+    private UIPanel losePanel;
+    private UILabel loseLabel;
+    
     public FBDrawPanel(FallingBlocksGame game, int size) 
     {
         setGame(game);
@@ -35,6 +46,49 @@ public class FBDrawPanel extends UIPanel
         
         setOffset(0, 0);
         setOffsetType(CENTER);
+        
+        timeDisplay = new UILabel();
+        add(timeDisplay);
+        
+        timeText = new UILabel();
+        add(timeText);
+        
+        scoreDisplay = new UILabel();
+        add(scoreDisplay);
+        
+        scoreText = new UILabel();
+        add(scoreText);
+        
+        holdLabel = new UILabel();
+        add(holdLabel);
+        
+        nextLabel = new UILabel();
+        add(nextLabel);
+        
+        levelText = new UILabel();
+        add(levelText);
+        
+        levelDisplay = new UILabel();
+        add(levelDisplay);
+        
+        linesText = new UILabel();
+        add(linesText);
+        
+        linesDisplay = new UILabel();
+        add(linesDisplay);
+        
+        losePanel = new UIPanel();
+        losePanel.setSize(200, 100);
+        losePanel.setOffsetType(UIElement.CENTER);
+        losePanel.setBackground(0x66BBFF);
+        add(losePanel);
+        losePanel.setVisible(false);
+        
+        loseLabel = new UILabel();
+        loseLabel.setText("Game Finished");
+        loseLabel.setFontSize(30);
+        loseLabel.setOffsetType(UIElement.CENTER);
+        losePanel.add(loseLabel);
         
         resize();
     }
@@ -66,6 +120,8 @@ public class FBDrawPanel extends UIPanel
         // not call super, so that it is transparent
         resize();
         
+        losePanel.setVisible(game.isGameEnded());
+        
 //        g.setColor(Color.GREEN);
 //        g.fillRect(0, 0, getWidth(), getHeight());
         
@@ -75,8 +131,36 @@ public class FBDrawPanel extends UIPanel
         drawPiece(g);
         drawNextPieces(g);
         drawGameOverlay(g);
+        
+        drawText();
     }
     
+    private void drawText()
+    {
+        updateLabel(levelDisplay, "" + game.getLevel(), 2.5, 13.5);
+        updateLabel(levelText, "Level", 2.5, 14.5);
+        
+        updateLabel(linesDisplay, "" + game.getLines() + " / " + game.getLinesToNextLevel(), 2.5, 10.5);
+        updateLabel(linesText, "Lines", 2.5, 11.5);
+        
+        updateLabel(scoreDisplay, "" + game.getScore(), 2.5, 7.5);
+        updateLabel(scoreText, "Score", 2.5, 8.5);
+        
+        updateLabel(timeDisplay, game.getTime(), 2.5, 4.5);
+        updateLabel(timeText, "Time", 2.5, 5.5);
+        
+        updateLabel(holdLabel, "Hold", 2.5, 22.5);
+        updateLabel(nextLabel, "Next", 19.5, 22.5);
+    }
+    
+    private void updateLabel(UILabel label, String text, double x, double y) 
+    {
+        label.setOffset(getBlockSizeX(x), getBlockSizeY(y));
+        label.setOffsetType(UIElement.BOTTOM_LEFT);
+        label.setText(text);
+        label.setFontSize(size);
+    }
+
     private void drawNextPieces(Graphics g) 
     {
         drawNextPiece(g);

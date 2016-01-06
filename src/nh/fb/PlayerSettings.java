@@ -1,5 +1,7 @@
 package nh.fb;
 
+import java.awt.event.KeyEvent;
+
 /*
  * Player dependent settings
  */
@@ -58,6 +60,8 @@ public class PlayerSettings
      * player dependent game settings
      */
     public int getLineClearWait() { return lineClearWait; }
+    
+    public int getPauseKey() { return KeyEvent.VK_P; }
     
     /*
      * set game settings
