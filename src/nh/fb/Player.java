@@ -24,6 +24,7 @@ public class Player
     
     public void update(Keyboard input, FallingBlocksGame game) 
     {
+        
         if (input.isKeyJustDown(settings.getPauseKey())) game.setPaused(!game.isPaused());
         
         if (isKeyPressValid(input, settings.getLeftKey())) 
@@ -56,70 +57,9 @@ public class Player
             game.moveDown();
         }
         
-        /*
-         * player input
-         */
-//        if (input.isKeyJustDown(settings.getRotCWKey())) 
-//        {
-//            game.rotatePieceCW();
-//        }
-//        
-//        if (input.isKeyJustDown(settings.getRotCCWKey())) 
-//        {
-//            game.rotatePieceCCW();
-//        }
-//        
-//        if (input.isKeyDown(settings.getLeftKey())) 
-//        {
-//            leftTime++;
-//        }
-//        else 
-//        {
-//            leftTime = 0;
-//        }
-//        
-//        if ((leftTime - 1) % waitTime == 0) 
-//        {
-//            game.movePieceLeft();
-//        }
-//        
-//        if (input.isKeyDown(settings.getRightKey())) 
-//        {
-//            rightTime++;
-//        }
-//        else 
-//        {
-//            rightTime = 0;
-//        }
-//        
-//        if ((rightTime - 1) % waitTime == 0) 
-//        {
-//            game.movePieceRight();
-//        }
-//        
-//        if (input.isKeyDown(settings.getDownKey())) 
-//        {
-//            downTime++;
-//        }
-//        else 
-//        {
-//            downTime = 0;
-//        }
-//        
-//        if ((downTime - 1) % dropWaitTime == 0) 
-//        {
-//            boolean dropped = game.movePieceDown();
-//            game.resetFallTime();
-//            
-//            if (!dropped) 
-//            {
-//                game.lockAndGetNextPiece();
-//            }
-//        }
-//        
-//        if (input.isKeyJustDown(settings.getHardDropKey())) 
-//        {
-//            game.hardDropPiece();
-//        }
+        if (input.isKeyJustDown(settings.getHoldKey())) 
+        {
+            game.holdPiece();
+        }
     }
 }

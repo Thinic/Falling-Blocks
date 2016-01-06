@@ -130,9 +130,30 @@ public class FBDrawPanel extends UIPanel
         drawGhostPiece(g);
         drawPiece(g);
         drawNextPieces(g);
+//        drawHoldPiece(g);
         drawGameOverlay(g);
         
         drawText();
+        
+        drawHoldPiece(g);
+    }
+    
+    private void drawHoldPiece(Graphics g) 
+    {
+        PieceType type = game.getHoldPiece();
+        if (type == null) return;
+        
+        int rot = 0;
+        int id = 0;
+        
+        int boardx = holdWidth - 1;
+        int width = -4;
+        int height = game.getBoard().getHeight() + 2;
+        
+        double offX = (4 - type.getWidth() + type.getLeftOffset(0) - type.getRightOffset(0)) / 2.0;
+        double offY = (4 - type.getHeight() + type.getTopOffset(0) - type.getBottomOffset(0)) / 2.0;
+        
+        drawPieceType(g, blockRenderer, type, rot, id, boardx + width + offX, height - holdHeight - 1 + offY);
     }
     
     private void drawText()
@@ -202,8 +223,6 @@ public class FBDrawPanel extends UIPanel
         
         double offX = (4 - type.getWidth() + type.getLeftOffset(0) - type.getRightOffset(0)) / 2.0;
         double offY = (4 - type.getHeight() + type.getTopOffset(0) - type.getBottomOffset(0)) / 2.0;
-        
-        
         
         drawPieceType(g, blockRenderer, type, rot, id, boardx + width + offX, height - holdHeight - 1 + offY);
     }

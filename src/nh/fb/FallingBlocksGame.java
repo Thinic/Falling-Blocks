@@ -23,6 +23,7 @@ public class FallingBlocksGame
     private PieceType[] pieceBuffer;
     
     private Piece current;
+    private PieceType holdPieceType;
     
     private GameSettings settings;
     private Board board;
@@ -36,6 +37,8 @@ public class FallingBlocksGame
                 level;
     
     private boolean pause = false, gameEnded = false;
+    
+    private boolean canHold = true;
     
     public FallingBlocksGame(GameSettings settings) 
     {
@@ -62,6 +65,32 @@ public class FallingBlocksGame
         fillPieceTypeBuffer();
         
         createNextPiece();
+    }
+    
+    public boolean holdPiece() 
+    {
+        if (!canHold) return false;
+        
+        PieceType oldHold = holdPieceType;
+        
+        holdPieceType = current.getType();
+        
+        if (oldHold == null) createNextPiece();
+        else genPieceAtTop(oldHold);
+        
+        canHold = false;
+        
+        return true;
+    }
+    
+    public boolean hasHoldPiece() 
+    {
+        return holdPieceType != null;
+    }
+    
+    public PieceType getHoldPiece() 
+    {
+        return holdPieceType;
     }
     
     public String getTime() 
@@ -334,6 +363,8 @@ public class FallingBlocksGame
             board.setBlock(b);
         }
         
+        canHold = true;
+        
         createNextPiece();
     }
     
@@ -379,8 +410,11 @@ public class FallingBlocksGame
     
     private void genPieceAtTop() 
     {
-        PieceType type = pieceBuffer[0];
-        
+        genPieceAtTop(pieceBuffer[0]);
+    }
+    
+    private void genPieceAtTop(PieceType type) 
+    {
         current = pieceGen.create(type, 
                 board.getWidth()/2 - (int)Math.ceil(type.getWidth()/2.0), 
                 board.getHeight() - type.getHeight() + type.getTopOffset(0));

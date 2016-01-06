@@ -72,6 +72,7 @@ public class PlayState extends GameState implements UIActionListener
         playerSettings.setRotCCWKey(KeyEvent.VK_Z);
         playerSettings.setRotCWKey(KeyEvent.VK_X);
         playerSettings.setHardDropKey(KeyEvent.VK_SPACE);
+        playerSettings.setHoldKey(KeyEvent.VK_C);
         playerSettings.setKeyWait(18);
         playerSettings.setKeyRepeat(6);
         

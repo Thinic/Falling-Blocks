@@ -76,6 +76,7 @@ public class DuelState extends GameState implements UIActionListener
         pSettings1.setRotCCWKey(KeyEvent.VK_Z);
         pSettings1.setRotCWKey(KeyEvent.VK_X);
         pSettings1.setHardDropKey(KeyEvent.VK_Q);
+        pSettings1.setHoldKey(KeyEvent.VK_E);
         pSettings1.setKeyWait(18);
         pSettings1.setKeyRepeat(6);
         player1 = new Player(pSettings1);
@@ -88,6 +89,7 @@ public class DuelState extends GameState implements UIActionListener
         pSettings2.setRotCCWKey(KeyEvent.VK_DELETE);
         pSettings2.setRotCWKey(KeyEvent.VK_PAGE_DOWN);
         pSettings2.setHardDropKey(KeyEvent.VK_END);
+        pSettings2.setHoldKey(KeyEvent.VK_HOME);
         pSettings2.setKeyWait(18);
         pSettings2.setKeyRepeat(6);
         player2 = new Player(pSettings2);
