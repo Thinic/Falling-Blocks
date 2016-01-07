@@ -16,7 +16,7 @@ public class BasicBlockRenderer extends BlockRenderer
         
         g.setColor(getColor(type).darker());
         
-        int border = 3;
+        int border = size/16;
         
         int sizeBorder = size - border;
         
@@ -97,6 +97,7 @@ public class BasicBlockRenderer extends BlockRenderer
             case PieceType.S_VALUE: return new Color(0x3FDF3F);
             case PieceType.Z_VALUE: return new Color(0xBF1F1F);
             case PieceType.O_VALUE: return new Color(0xDFDF2F);
+            case PieceType.JUNK_VALUE: return new Color(0xCFCFCF);
             default: return new Color(0x9F9F9F);
         }
     }

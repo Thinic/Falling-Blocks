@@ -24,6 +24,8 @@ public class PieceType
     public static final int L_VALUE = 6;
     public static final int O_VALUE = 7;
     
+    public static final int JUNK_VALUE = 0xFF;
+    
     /*
      * 4 x 1 piece, I block
      */

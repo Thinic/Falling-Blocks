@@ -19,4 +19,6 @@ public class PieceGenerator
         
         return p;
     }
+    
+    public int genID() { return nextID++; }
 }

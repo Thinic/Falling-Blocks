@@ -65,6 +65,9 @@ public class DuelState extends GameState implements UIActionListener
         game1 = new FallingBlocksGame(settings);
         game2 = new FallingBlocksGame(settings);
         
+        game1.setGame2Player(game2);
+        game2.setGame2Player(game1);
+        
         panel1.setGame(game1);
         panel2.setGame(game2);
         

@@ -75,6 +75,18 @@ public class Board
         
         return true;
     }
+    
+    public boolean isPieceInBounds(Piece p) 
+    {
+        BlockData[] data = p.getBlockData();
+        
+        for (BlockData d : data) 
+        {
+            if (!inBounds(d)) return false;
+        }
+        
+        return true;
+    }
 
     public int getWidth()
     {

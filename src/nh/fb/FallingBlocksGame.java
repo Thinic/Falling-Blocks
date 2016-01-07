@@ -40,9 +40,13 @@ public class FallingBlocksGame
     
     private boolean canHold = true;
     
+    private FallingBlocksGame game2p;
+    
     public FallingBlocksGame(GameSettings settings) 
     {
         this.settings = settings;
+        
+        game2p = null;
         
         board = new Board(settings.getBoardWidth(), settings.getBoardHeight());
         
@@ -65,6 +69,52 @@ public class FallingBlocksGame
         fillPieceTypeBuffer();
         
         createNextPiece();
+        
+        addJunkLine();
+    }
+    
+    public void setGame2Player(FallingBlocksGame game) 
+    {
+        game2p = game;
+    }
+    
+    private void addJunkLine() 
+    {
+        // move blocks up
+        for (int y = board.getHeight(); y >= 1; y--) 
+        {
+            for (int x = 0; x < board.getWidth(); x++) 
+            {
+                int value = board.getValue(x, y - 1);
+                int id = board.getID(x, y - 1);
+                
+                board.setBlock(new BlockData(x, y, value, id));
+            }
+        }
+        
+        for (int x = 0; x < board.getWidth(); x++) 
+        {
+            int value = PieceType.JUNK_VALUE;
+            int id = pieceGen.genID();
+            
+            board.setBlock(new BlockData(x, 0, value, id));
+        }
+        
+        // TODO figure out why it won't work without this line
+        // without this line it doesn't work?
+        board.clearBlock((int)(Math.random()*board.getWidth()), 0);
+        
+        while (!gameEnded && !board.isPieceValid(current)) 
+        {
+            if (!board.isPieceInBounds(current)) 
+            {
+                gameEnded = true;
+            }
+            else 
+            {
+                current.move(0, 1);
+            }
+        }
     }
     
     public boolean holdPiece() 
@@ -343,6 +393,14 @@ public class FallingBlocksGame
         }
         
         lines += numLines;
+        
+        if (numLines > 0 && game2p != null) 
+        {
+            for (int i = 0; i < numLines - 1; i++) 
+            {
+                game2p.addJunkLine();
+            }    
+        }
         
         switch (numLines) 
         {

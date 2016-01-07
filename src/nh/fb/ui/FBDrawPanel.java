@@ -130,12 +130,10 @@ public class FBDrawPanel extends UIPanel
         drawGhostPiece(g);
         drawPiece(g);
         drawNextPieces(g);
-//        drawHoldPiece(g);
+        drawHoldPiece(g);
         drawGameOverlay(g);
         
         drawText();
-        
-        drawHoldPiece(g);
     }
     
     private void drawHoldPiece(Graphics g) 
