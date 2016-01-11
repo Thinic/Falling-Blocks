@@ -107,7 +107,7 @@ public class Board
 
     public void clearLineAndDropAbove(int yStart)
     {
-        for (int y = yStart; y < getHeight() - 2; y++) 
+        for (int y = yStart; y < getHeight() - 1; y++) 
         {
             for (int x = 0; x < getWidth(); x++) 
             {

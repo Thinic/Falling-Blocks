@@ -127,7 +127,7 @@ public class FBDrawPanel extends UIPanel
         
         drawGameBackground(g);
         drawBoard(g);
-        drawGhostPiece(g);
+        if (!game.isGameEnded()) drawGhostPiece(g);
         drawPiece(g);
         drawNextPieces(g);
         drawHoldPiece(g);

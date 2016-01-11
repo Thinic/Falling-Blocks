@@ -46,14 +46,23 @@ public abstract class StateBasedGame
         
         window.show();
         
+        long tickTime = System.nanoTime();
+        int skipTicks = 1000000000 / 100;
+        
         while (running) 
         {
-            update();
+            int loops = 0;
+            while (tickTime < System.nanoTime() && loops++ < 10) 
+            {
+                update();
+                tickTime += skipTicks;
+            }
+            
             draw();
             
             try
             {
-                Thread.sleep(1000 / 100);
+                Thread.sleep(1);
             } catch (InterruptedException e)
             {
                 // TODO Auto-generated catch block

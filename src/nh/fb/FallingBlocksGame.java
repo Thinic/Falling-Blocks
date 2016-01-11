@@ -15,7 +15,8 @@ public class FallingBlocksGame
     private static final int SCORE_SINGLE = 80;
     private static final int SCORE_DOUBLE = 200;
     private static final int SCORE_TRIPLE = 500;
-    private static final int SCORE_4_LINE = 800;
+    private static final int SCORE_4_LINE = 1000;
+    private static final int SCORE_T_SPIN = 900;
     
     private PieceGenerator pieceGen;
     private PieceTypeGenerator pieceTypeGen;
@@ -39,6 +40,11 @@ public class FallingBlocksGame
     private boolean pause = false, gameEnded = false;
     
     private boolean canHold = true;
+    
+    private int numJunkToAdd = 0;
+    private int timeJunkToAdd = 0;
+    
+    private int combo = 0;
     
     private FallingBlocksGame game2p;
     
@@ -70,7 +76,12 @@ public class FallingBlocksGame
         
         createNextPiece();
         
-        addJunkLine();
+        //TODO remove
+//        addJunkLine();
+//        addJunkLine();
+//        addJunkLine();
+//        addJunkLine();
+//        addJunkLine();
     }
     
     public void setGame2Player(FallingBlocksGame game) 
@@ -78,8 +89,58 @@ public class FallingBlocksGame
         game2p = game;
     }
     
+    private void addCombo() 
+    {
+        combo++;
+    }
+    
+    private void resetCombo() 
+    {
+        combo = 0;
+    }
+    
+    private void addJunkLinesToBuffer(int num) 
+    {
+        numJunkToAdd += num;
+        
+        timeJunkToAdd = 3 * settings.getTicksPerSecond();
+        
+        System.out.println(numJunkToAdd + " " + timeJunkToAdd);
+    }
+    
+    private void removeJunkLinesToBuffer(int num) 
+    {
+        addJunkLinesToBuffer(-num);
+    }
+    
+    private void calcJunkLines(int num) 
+    {
+        if (game2p != null) 
+        {
+            int linesToAdd = num;
+            
+            if (numJunkToAdd == 0) 
+            {
+                game2p.addJunkLinesToBuffer(linesToAdd);  
+            }
+            else if (numJunkToAdd >= linesToAdd) 
+            {
+                this.removeJunkLinesToBuffer(linesToAdd);
+            }
+            else if (numJunkToAdd < linesToAdd) 
+            {
+                int send = linesToAdd - numJunkToAdd;
+                
+                this.removeJunkLinesToBuffer(numJunkToAdd);
+                game2p.addJunkLinesToBuffer(send);  
+            }
+        }
+    }
+    
     private void addJunkLine() 
     {
+        if (gameEnded) return;
+        
         // move blocks up
         for (int y = board.getHeight(); y >= 1; y--) 
         {
@@ -186,18 +247,27 @@ public class FallingBlocksGame
         
         timer++;
         
+        timeJunkToAdd--;
+        if (timeJunkToAdd <= 0) 
+        {
+            for (int i = 0; i < numJunkToAdd; i++) 
+            {
+                addJunkLine();
+            }
+            
+            numJunkToAdd = 0;
+        }
+        
         while (lines >= linesToNextLevel) 
         {
             level++;
             
             linesToNextLevel += 4 + (int)((level + 1) * 1.5);
             
-            ticksBeforeFall = (int) Math.floor(1.0 / (1 + 0.1*level*level) * settings.getInitialFallWaitTicks());
+            ticksBeforeFall = (int) Math.floor(1.0 / (1 + 0.03*level*level) * settings.getInitialFallWaitTicks());
         }
         
         ticksSinceLastFall++;
-        
-        checkForLines();
         
         if (isOnGround()) 
         {
@@ -378,7 +448,7 @@ public class FallingBlocksGame
         return true;
     }
     
-    private void checkForLines() 
+    private boolean checkForLines(boolean validAbove) 
     {
         int numLines = 0;
         
@@ -394,26 +464,61 @@ public class FallingBlocksGame
         
         lines += numLines;
         
-        if (numLines > 0 && game2p != null) 
+        boolean isTSpin = false;
+        
+        if (current.getType() == PieceType.T) 
         {
-            for (int i = 0; i < numLines - 1; i++) 
+            if (current.getRotation() == 0 || current.getRotation() == 2) 
             {
-                game2p.addJunkLine();
-            }    
+                if (numLines == 2) 
+                {
+                    isTSpin = !validAbove;
+                }
+            } 
         }
         
-        switch (numLines) 
+        if (numLines > 0) 
         {
-            case 1: score += SCORE_SINGLE * (level+1); break;
-            case 2: score += SCORE_DOUBLE * (level+1); break;
-            case 3: score += SCORE_TRIPLE * (level+1); break;
-            case 4: score += SCORE_4_LINE * (level+1); break;
-            default: break;
+            addCombo();
+            
+            if (combo > 1) 
+            {
+                calcJunkLines(1);//Math.min(combo - 1, 3));
+            }
         }
+        
+        if (numLines == 4 || isTSpin) 
+        {
+            calcJunkLines(3);
+        }
+        else if (numLines > 1) 
+        {
+            calcJunkLines(numLines - 1);
+        }
+        
+        if (isTSpin) 
+        {
+            score += SCORE_T_SPIN * (level+1) * (combo);
+        }
+        else 
+        {
+            switch (numLines) 
+            {
+                case 1: score += SCORE_SINGLE * (level+1) * (combo); break;
+                case 2: score += SCORE_DOUBLE * (level+1) * (combo); break;
+                case 3: score += SCORE_TRIPLE * (level+1) * (combo); break;
+                case 4: score += SCORE_4_LINE * (level+1) * (combo); break;
+                default: break;
+            }
+        }
+        
+        return numLines > 0;
     }
     
     private void lockPiece() 
     {
+        boolean validAbove = isValidAbove();
+        
         BlockData[] data = current.getBlockData();
         
         for (BlockData b : data) 
@@ -423,7 +528,20 @@ public class FallingBlocksGame
         
         canHold = true;
         
+        if (!checkForLines(validAbove)) resetCombo();
+        
         createNextPiece();
+    }
+    
+    private boolean isValidAbove() 
+    {
+        boolean b = false;
+        
+        current.move(0, 1);
+        b = board.isPieceValid(current);
+        current.move(0, -1);
+        
+        return b;
     }
     
     private boolean movePieceDownNaturally() 
